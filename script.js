@@ -1,24 +1,61 @@
-document.querySelector(`.add-task-button`).addEventListener(`click`, function () {
-    let li = document.createElement(`li`);
-    let inputValue = document.querySelector(`.input-task`).value;
-    let t = document.createTextNode(inputValue);
-    li.appendChild(t);
-    if (inputValue === '') {
-        alert(`Введите текст!`);
-    } else {
-        // document.querySelector(".task-list").appendChild(li);
 
-        let li = `<li>
-                    <label>
-                        <input type="checkbox" class="checkbox" />
-                        <span class="task">${inputValue}</span>
-                    </label>
-                    <button class="delete-btn"></button>
-                  </li>`;
+// add delete buttons
+const toDoListItems = document.getElementsByTagName('li');
+for (let i = 0; i < toDoListItems.length; i++) {
+    const delButton = document.createElement('button');
+    delButton.className = 'delete-btn';
+    toDoListItems[i].appendChild(delButton);
+}
 
-        let list = document.querySelector(".task-list");
-
-        list.innerHTML += li;
+// delete click
+const deleteButtons = document.getElementsByClassName('delete-btn');
+for (let i = 0; i < deleteButtons.length; i++) {
+    deleteButtons[i].onclick = function () {
+        return this.parentNode.remove();
     }
-    document.querySelector(`.input-task`).value = ``;
+}
+
+// add new task
+document.getElementById('add-task-button').addEventListener('click', function () {
+
+    const inputValue = document.getElementById('input-task').value;
+    const li = document.createElement('li');
+
+
+    if (inputValue === '') {
+        alert('Введите текст!');
+    } else {
+        document.getElementById('task-list').appendChild(li);
+    }
+
+    const span = document.createElement('span');
+    span.className = 'task';
+    li.appendChild(span);
+
+    const inputContent = document.createTextNode(`${inputValue}`);
+    span.appendChild(inputContent);
+
+
+    document.getElementById('input-task').value = ''; 
+
+    const delButton = document.createElement('button');
+    delButton.className = 'delete-btn';
+    li.appendChild(delButton);
+
+    const deleteButtons = document.getElementsByClassName('delete-btn');
+    for (let i = 0; i < deleteButtons.length; i++) {
+        deleteButtons[i].onclick = function () {
+            let div = this.parentElement;
+            return div.remove();
+        }
+    }
+
+    const checkbox = document.createElement('input');
+    checkbox.className = 'checkbox';
+    checkbox.type = 'checkbox';
+
+    const firstChild = document.getElementsByClassName('task');
+
+    li.insertBefore(checkbox, li.firstChild);
+
 });
