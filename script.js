@@ -1,61 +1,88 @@
+const ulList = document.getElementById('task-list');
+const inputTask = document.getElementById('input-task');
+const addTaskButton = document.getElementById('add-task-button');
 
-// add delete buttons
-const toDoListItems = document.getElementsByTagName('li');
-for (let i = 0; i < toDoListItems.length; i++) {
-    const delButton = document.createElement('button');
-    delButton.className = 'delete-btn';
-    toDoListItems[i].appendChild(delButton);
+let taskStorage = [];
+
+// get from localStorage
+function restoreTaskList(task, checked=false) {
+    taskStorage = JSON.parse(localStorage.getItem('tasks')) || [];
+    taskStorage.forEach((value) => {
+        createLi(value.task, value.checked);
+    });
 }
+restoreTaskList();
 
-// delete click
-const deleteButtons = document.getElementsByClassName('delete-btn');
-for (let i = 0; i < deleteButtons.length; i++) {
-    deleteButtons[i].onclick = function () {
-        return this.parentNode.remove();
+// delete task
+ulList.addEventListener("click", (e) => {
+    if (e.target.classList.contains('delete-btn')){
+        e.target.parentElement.remove();
+        saveTaskList();
     }
-}
+});
 
-// add new task
-document.getElementById('add-task-button').addEventListener('click', function () {
+// check task
+// for now, crossing out through css, then fix it
+ulList.addEventListener('click', (e) => {
 
-    const inputValue = document.getElementById('input-task').value;
+    if (e.target.classList.contains('checkbox')){
+        // let span = e.target.parentElement.querySelector('span');
+        // span.classList.toggle('checked');
+        saveTaskList();
+    }
+});
+
+// create new task
+function createLi (task, checked=false) {
+
     const li = document.createElement('li');
-
-
-    if (inputValue === '') {
-        alert('Введите текст!');
-    } else {
-        document.getElementById('task-list').appendChild(li);
-    }
-
     const span = document.createElement('span');
+    const inputContent = document.createTextNode(task);
+    const delButton = document.createElement('button');
+    const checkbox = document.createElement('input');
+    const firstChild = document.getElementsByClassName('task');
+
+    document.getElementById('task-list').appendChild(li);
+
     span.className = 'task';
+    // span.appendChild(document.createTextNode(task));
     li.appendChild(span);
 
-    const inputContent = document.createTextNode(`${inputValue}`);
     span.appendChild(inputContent);
 
-
-    document.getElementById('input-task').value = ''; 
-
-    const delButton = document.createElement('button');
     delButton.className = 'delete-btn';
     li.appendChild(delButton);
 
-    const deleteButtons = document.getElementsByClassName('delete-btn');
-    for (let i = 0; i < deleteButtons.length; i++) {
-        deleteButtons[i].onclick = function () {
-            let div = this.parentElement;
-            return div.remove();
-        }
-    }
-
-    const checkbox = document.createElement('input');
     checkbox.className = 'checkbox';
     checkbox.type = 'checkbox';
-
-    const firstChild = document.getElementsByClassName('task');
+    checkbox.checked = checked;
 
     li.insertBefore(checkbox, li.firstChild);
 
+    document.getElementById('input-task').value = '';
+};
+
+// add new task click
+addTaskButton.addEventListener('click', function (e) {
+
+    if (!inputTask.value) {
+        alert('Введите текст!');
+    } else {
+        createLi(inputTask.value);
+        saveTaskList();
+    }
+
 });
+
+// save to localStore
+function saveTaskList() {
+    let tasks = ulList.querySelectorAll('li');
+    taskStorage = [];
+    tasks.forEach((t) => {
+        taskStorage.push({
+            'task': t.querySelector('.task').textContent,
+            'checked': t.querySelector(".checkbox").checked
+        });
+    });
+    localStorage.setItem('tasks', JSON.stringify(taskStorage));
+};
