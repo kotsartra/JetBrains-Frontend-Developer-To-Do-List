@@ -21,7 +21,7 @@ ulList.addEventListener("click", (e) => {
     }
 });
 
-// check task
+// mark task as checked
 // for now, crossing out through css, then fix it
 ulList.addEventListener('click', (e) => {
 
@@ -59,19 +59,33 @@ function createLi (task, checked=false) {
 
     li.insertBefore(checkbox, li.firstChild);
 
+
+
     document.getElementById('input-task').value = '';
-};
+}
+
+// check input
+function checkInputValue (input) {
+    const isInputBlank = input.value === '';
+    if (isInputBlank) alert('Введите текст!')
+    return !isInputBlank;
+}
 
 // add new task click
-addTaskButton.addEventListener('click', function (e) {
+addTaskButton.addEventListener('click',  function (e) {
 
-    if (!inputTask.value) {
-        alert('Введите текст!');
-    } else {
-        createLi(inputTask.value);
-        saveTaskList();
+    if (!checkInputValue(inputTask)) return
+    createLi(inputTask.value);
+    saveTaskList();
+
+});
+
+// add new task keydown enter
+inputTask.addEventListener('keydown', function(e) {
+    if (e.keyCode === 13) {
+        addTaskButton.click();
+        e.preventDefault();
     }
-
 });
 
 // save to localStore
@@ -85,4 +99,4 @@ function saveTaskList() {
         });
     });
     localStorage.setItem('tasks', JSON.stringify(taskStorage));
-};
+}
